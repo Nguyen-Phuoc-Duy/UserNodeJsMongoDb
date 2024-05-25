@@ -1,17 +1,30 @@
 var express = require("express");
 var router = express.Router();
 const modelUser = require("../models/user");
+const Transporter = require("../config/mail");
+const Upload = require("../config/upload");
 /* GET users listing. */
 router.get("/test", function (req, res, next) {
   res.send("respond with a resource user test");
 });
 
 //add data
-router.post("/add", async (req, res) => {
+// router.post("/add", Upload.array('images', 5), async (req, res) => {
+router.post("/add", Upload.single("avatar"), async (req, res) => {
   try {
+    const { file } = req;
+    const urlImages = `${req.protocol}://${req.get("host")}/uploads/${file.filename}`;
     const model = new modelUser(req.body);
+    model.avatar = urlImages;
     const result = await model.save(); // them du lieu vao database
     if (result) {
+      const mailOption = {
+        from: "nguyenphuocduy290801@gmail.com",
+        to: model.email, //mail ng dung dang ky
+        subject: "Welcom to NodeJs",
+        text: "chuc mung dang ky thanh cong",
+      };
+      await Transporter.sendMail(mailOption);
       res.json({
         status: 200,
         message: "them thanh cong",
@@ -66,7 +79,7 @@ router.patch("/edit/:id", async (req, res) => {
   try {
     const result = await modelUser.findByIdAndUpdate(req.params.id, req.body);
     if (result) {
-      const rs = result.save()
+      const rs = result.save();
       res.send(rs);
     } else {
       res.json({
