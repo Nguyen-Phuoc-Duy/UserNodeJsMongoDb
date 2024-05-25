@@ -9,6 +9,7 @@ var usersRouter = require("./routes/userRouteres");
 var distrbutorsRouter = require("./routes/distributorRouteres");
 var fruitsRouter = require("./routes/fruitRouteres");
 var uploadsRouter = require("./routes/uploadRoutes");
+var emailsRouter = require('./routes/emailRouters')
 database.connect();
 var app = express();
 
@@ -27,6 +28,7 @@ app.use("/users", usersRouter);
 app.use("/distributors", distrbutorsRouter);
 app.use("/fruits", fruitsRouter);
 app.use("/uploads", uploadsRouter)
+app.use("/sendmail", emailsRouter)
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
